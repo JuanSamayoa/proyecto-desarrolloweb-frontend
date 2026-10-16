@@ -2,7 +2,9 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:10001/api";
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://dw-api-backend-2026-gmd6hmbzb6crf9cd.mexicocentral-01.azurewebsites.net/api";
 
 function App() {
   const [actividades, fijarActividades] = useState([]);
