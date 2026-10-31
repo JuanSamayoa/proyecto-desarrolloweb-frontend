@@ -1,29 +1,29 @@
 import { useEffect, useState } from "react";
-import "../App.css"
+import "../App.css";
 
 const API_URL =
   import.meta.env.VITE_API_URL ||
   "https://dw-api-backend-2026-gmd6hmbzb6crf9cd.mexicocentral-01.azurewebsites.net/api";
 
-function Reporte(){
+function Reporte() {
   const [progresos, fijarProgresos] = useState([]);
 
   const buscarProgresos = async () => {
-      try {
-        const res = await fetch(`${API_URL}/progresos`);
-        const data = await res.json();
-        fijarProgresos(data);
-      } catch (error) {
-        console.error("Error al obtener progresos:", error);
-      }
-    };
+    try {
+      const res = await fetch(`${API_URL}/progresos`);
+      const data = await res.json();
+      fijarProgresos(data);
+    } catch (error) {
+      console.error("Error al obtener progresos:", error);
+    }
+  };
 
-    useEffect(() => {
-        buscarProgresos();
-      }, []);
+  useEffect(() => {
+    buscarProgresos();
+  }, []);
 
-  return(
-    <div>
+  return (
+    <main className="reporte">
       <h3>Reporte de Progreso Educativo</h3>
       <table className="tabla">
         <thead>
@@ -57,7 +57,7 @@ function Reporte(){
           )}
         </tbody>
       </table>
-    </div>
+    </main>
   );
 }
 

@@ -7,6 +7,8 @@ function JuegoFiguras({ onReturn }) {
   const [figuraObjetivo, setFiguraObjetivo] = useState("Triangulo");
   const [mensaje, setMensaje] = useState("");
   const [puntuacion, setPuntuacion] = useState(0);
+  const [contador, setContador] = useState(1);
+  const [juegoGanado, setJuegoGanado] = useState(false);
 
   const obtenerFiguraAleatoria = () => {
     //constantes para obtener un numero al azar
@@ -20,19 +22,59 @@ function JuegoFiguras({ onReturn }) {
   const evaluarRespuesta = (figuraSeleccionada) => {
     if (figuraSeleccionada === figuraObjetivo) {
       setMensaje("¡Excelente!");
-      setPuntuacion(puntuacion + 10);
+      setPuntuacion((prev) => prev + 10);
+      const siguienteContador = contador + 1;
+
+      if (siguienteContador === 11) {
+        setContador(10);
+        setJuegoGanado(true);
+        return;
+      }
+
       obtenerFiguraAleatoria();
+      setContador(siguienteContador);
     } else {
-      alert("Haz perdido, intentalo de nuevo. Tu puntuación es: " + puntuacion);
+      alert(
+        "Haz perdido, intentalo de nuevo. Tu puntuación ha sido: " + puntuacion,
+      );
       setMensaje("¡Intentalo de nuevo!");
-      setPuntuacion(0);
+      setContador(1);
     }
+  };
+
+  const reiniciarJuego = () => {
+    setFiguraObjetivo("Triangulo");
+    setMensaje("");
+    setPuntuacion(0);
+    setContador(1);
+    setJuegoGanado(false);
   };
 
   return (
     <div className="contenedor">
+      {juegoGanado && (
+        <div className="modal">
+          <div className="cuadro-modal">
+            <p className="texto-objetivo">
+              ¡Felicidades, reconociste todas las figuras! 🎉
+            </p>
+            <button
+              className="btn btn-modal btn-reiniciar"
+              onClick={reiniciarJuego}
+            >
+              Intentar de nuevo
+            </button>
+            <button className="btn btn-modal btn-modal-menu" onClick={onReturn}>
+              Salir al menú
+            </button>
+          </div>
+        </div>
+      )}
       <h1 className="titulo">Reconocer figuras</h1>
-      <p className="texto-instruccion">Debes seleccionar la figura que se pide a continuación.</p>
+      <p className="texto-instruccion">
+        Debes seleccionar la figura que se pide a continuación.
+      </p>
+      <p className="contador">Pregunta no: {contador} / 10</p>
       <h2 className="subtitulo">
         Haz clic en el: <span className="texto-objetivo">{figuraObjetivo}</span>
       </h2>

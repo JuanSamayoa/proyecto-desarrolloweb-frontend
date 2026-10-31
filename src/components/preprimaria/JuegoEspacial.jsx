@@ -67,11 +67,22 @@ function JuegoEspacial({ onReturn }) {
   const [puntuacion, setPuntuacion] = useState(0);
   const [indicePregunta, setIndicePregunta] = useState(0);
   const [mensaje, setMensaje] = useState("");
+  const [numeroPreguntas, setNumeroPreguntas] = useState(0);
+  const [juegoGanado, setJuegoGanado] = useState(false);
 
   const evaluarRespuesta = (respuesta) => {
-    if(respuesta === preguntas[indicePregunta].respuesta){
+    if (respuesta === preguntas[indicePregunta].respuesta) {
       setMensaje("¡Excelente!");
-      setPuntuacion(puntuacion + 10);
+      setPuntuacion((prev) => prev + 10);
+      const siguientePregunta = numeroPreguntas + 1;
+
+      if (siguientePregunta === preguntas.length) {
+        setNumeroPreguntas(siguientePregunta);
+        setJuegoGanado(true);
+        return;
+      }
+
+      setNumeroPreguntas(siguientePregunta);
       obtenerPregunta();
     } else {
       alert("Haz perdido, intentalo de nuevo. Tu puntuación es: " + puntuacion);
@@ -88,8 +99,34 @@ function JuegoEspacial({ onReturn }) {
     setIndicePregunta(nuevoIndice);
   };
 
+  const reiniciarJuego = () => {
+    setPuntuacion(0);
+    setIndicePregunta(0);
+    setNumeroPreguntas(0);
+    setMensaje("");
+    setJuegoGanado(false);
+  };
+
   return (
     <div className="contenedor">
+      {juegoGanado && (
+        <div className="modal">
+          <div className="cuadro-modal">
+            <p className="texto-objetivo">
+              ¡Felicidades, completaste el juego espacial! 🎉
+            </p>
+            <button
+              className="btn btn-modal btn-reiniciar"
+              onClick={reiniciarJuego}
+            >
+              Intentar de nuevo
+            </button>
+            <button className="btn btn-modal btn-modal-menu" onClick={onReturn}>
+              Salir al menú
+            </button>
+          </div>
+        </div>
+      )}
       <h1 className="titulo">Juego Espacial</h1>
       <p className="texto-instruccion">
         Debes seleccionar "Si" si es verdadero o "No" si es falso.

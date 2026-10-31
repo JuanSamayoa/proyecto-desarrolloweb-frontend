@@ -1,9 +1,9 @@
 import { useState } from "react";
 import "../../App.css";
-import gato from "../../assets/svg/cat.svg"
-import perro from "../../assets/svg/dog.svg"
-import leon from "../../assets/svg/lion.svg"
-import delfin from "../../assets/svg/dolphin.svg"
+import gato from "../../assets/svg/cat.svg";
+import perro from "../../assets/svg/dog.svg";
+import leon from "../../assets/svg/lion.svg";
+import delfin from "../../assets/svg/dolphin.svg";
 import { useRef } from "react";
 
 function JuegoMemoria({ onReturn }) {
@@ -108,18 +108,18 @@ function JuegoMemoria({ onReturn }) {
               return carta;
             }
           });
-          console.log("Mal intento")
+          console.log("Mal intento");
           setBaraja(barajaActualizada);
           setSeleccionadas([]);
           setDeshabilitado(false);
-          setPuntuacion(puntuacion - 10);
+          setPuntuacion((prev) => Math.max(0, prev - 5));
         }, 1000);
       }
     }
   };
 
   const reiniciarTablero = () => {
-    console.log("Reiniciando baraja...")
+    console.log("Reiniciando baraja...");
     clearTimeout(timerReinicio.current);
     const nuevaBaraja = baraja.map((c) => ({
       ...c,
@@ -128,7 +128,7 @@ function JuegoMemoria({ onReturn }) {
     }));
     //const juegoGanado = baraja.every((c) => c.encontrado === true);
     setBaraja(nuevaBaraja);
-    setSeleccionadas([])
+    setSeleccionadas([]);
     setPuntuacion(0);
     setDeshabilitado(false);
   };
@@ -137,15 +137,28 @@ function JuegoMemoria({ onReturn }) {
 
   return (
     <div className="contenedor">
+      {juegoGanado && (
+        <div className="modal">
+          <div className="cuadro-modal">
+            <p className="texto-objetivo">
+              ¡Felicidades, encontraste todos los pares! 🎉
+            </p>
+            <button
+              className="btn btn-modal btn-reiniciar"
+              onClick={() => reiniciarTablero()}
+            >
+              Intentar de nuevo
+            </button>
+            <button className="btn btn-modal btn-modal-menu" onClick={onReturn}>
+              Salir al menú
+            </button>
+          </div>
+        </div>
+      )}
       <h1 className="titulo">Juego de Memoria</h1>
       <p className="texto-instruccion">
         Debes encontrar 2 pares de la misma figura para ganar el juego!
       </p>
-      {juegoGanado && (
-        <h2 className="subtitulo">
-          ¡Felicidades, encontraste todos los pares! 🎉
-        </h2>
-      )}
       <div className="tablero-memoria">
         {baraja.map((b) => (
           <button
