@@ -19,8 +19,12 @@ const nombresActividades = {
 
 function Reporte() {
   const [progresos, fijarProgresos] = useState([]);
-  const [estudiantes] = useState(obtenerEstudiantes);
+  const [estudiantes, setEstudiantes] = useState([]);
   const [estudianteSeleccionado, setEstudianteSeleccionado] = useState("");
+
+  useEffect(() => {
+    obtenerEstudiantes().then(setEstudiantes);
+  }, []);
 
   useEffect(() => {
     const buscarProgresos = async () => {

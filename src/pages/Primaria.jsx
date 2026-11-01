@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../App.css";
 import JuegoMultiplicarDecimales from "../components/primaria/JuegoMultiplicarDecimales";
 import JuegoSumaQuebrados from "../components/primaria/JuegoSumaQuebrados";
@@ -10,8 +10,12 @@ import SelectorEstudiante, {
 function Primaria() {
   // Juegos activos
   const [juegoActivo, setJuegoActivo] = useState(null);
-  const [estudiantes] = useState(obtenerEstudiantes);
+  const [estudiantes, setEstudiantes] = useState([]);
   const [estudianteSeleccionado, setEstudianteSeleccionado] = useState("");
+
+  useEffect(() => {
+    obtenerEstudiantes().then(setEstudiantes);
+  }, []);
 
   if (juegoActivo === "tablas") {
     return (

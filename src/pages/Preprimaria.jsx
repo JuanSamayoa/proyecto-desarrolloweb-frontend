@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../App.css";
 import JuegoEspacial from "../components/preprimaria/JuegoEspacial";
 import JuegoFiguras from "../components/preprimaria/JuegoFiguras";
@@ -10,8 +10,12 @@ import SelectorEstudiante, {
 function Preprimaria() {
   // Juegos activos
   const [juegoActivo, setJuegoActivo] = useState(null);
-  const [estudiantes] = useState(obtenerEstudiantes);
+  const [estudiantes, setEstudiantes] = useState([]);
   const [estudianteSeleccionado, setEstudianteSeleccionado] = useState("");
+
+  useEffect(() => {
+    obtenerEstudiantes().then(setEstudiantes);
+  }, []);
 
   if (juegoActivo === "figuras") {
     return (

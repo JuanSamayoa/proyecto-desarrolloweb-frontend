@@ -8,7 +8,7 @@ const API_URL =
     ? "/api"
     : "https://dw-api-backend-2026-gmd6hmbzb6crf9cd.mexicocentral-01.azurewebsites.net/api");
 
-export const obtenerEstudiantes = () => {
+const obtenerEstudiantesLocales = () => {
   try {
     return JSON.parse(localStorage.getItem(CLAVE_ESTUDIANTES)) || [];
   } catch (error) {
@@ -17,8 +17,24 @@ export const obtenerEstudiantes = () => {
   }
 };
 
+export const obtenerEstudiantes = async () => {
+  try {
+    const respuesta = await fetch(`${API_URL}/estudiantes`);
+    if (!respuesta.ok) {
+      throw new Error("No se pudieron consultar los estudiantes");
+    }
+
+    const estudiantes = await respuesta.json();
+    localStorage.setItem(CLAVE_ESTUDIANTES, JSON.stringify(estudiantes));
+    return estudiantes;
+  } catch (error) {
+    console.error("Error al consultar estudiantes:", error);
+    return obtenerEstudiantesLocales();
+  }
+};
+
 export const guardarEstudiante = (estudiante) => {
-  const estudiantes = obtenerEstudiantes();
+  const estudiantes = obtenerEstudiantesLocales();
   const estudiantesActualizados = [
     ...estudiantes.filter((item) => item.id !== estudiante.id),
     estudiante,
