@@ -3,45 +3,73 @@ import "../App.css";
 import JuegoMultiplicarDecimales from "../components/primaria/JuegoMultiplicarDecimales";
 import JuegoSumaQuebrados from "../components/primaria/JuegoSumaQuebrados";
 import JuegoTablasMultiplicar from "../components/primaria/JuegoTablasMultiplicar";
+import SelectorEstudiante, {
+  obtenerEstudiantes,
+} from "../components/SelectorEstudiante";
 
 function Primaria() {
   // Juegos activos
   const [juegoActivo, setJuegoActivo] = useState(null);
+  const [estudiantes] = useState(obtenerEstudiantes);
+  const [estudianteSeleccionado, setEstudianteSeleccionado] = useState("");
 
-  if(juegoActivo === 'tablas'){
-    return <JuegoTablasMultiplicar onReturn={() => setJuegoActivo(null)} />;
-  } else if(juegoActivo === 'sumas') {
-    return <JuegoSumaQuebrados onReturn={() => setJuegoActivo(null)} />;
-  } else if(juegoActivo === 'multiplicacion'){
-    return <JuegoMultiplicarDecimales onReturn={() => setJuegoActivo(null)}/>
+  if (juegoActivo === "tablas") {
+    return (
+      <JuegoTablasMultiplicar
+        estudianteId={estudianteSeleccionado}
+        onReturn={() => setJuegoActivo(null)}
+      />
+    );
+  } else if (juegoActivo === "sumas") {
+    return (
+      <JuegoSumaQuebrados
+        estudianteId={estudianteSeleccionado}
+        onReturn={() => setJuegoActivo(null)}
+      />
+    );
+  } else if (juegoActivo === "multiplicacion") {
+    return (
+      <JuegoMultiplicarDecimales
+        estudianteId={estudianteSeleccionado}
+        onReturn={() => setJuegoActivo(null)}
+      />
+    );
   }
 
   return (
     <div className="contenedor">
       <h1 className="titulo">Bienvenido a la plataforma para Primaria</h1>
       <h2 className="subtitulo">Selecciona un Minijuego</h2>
+      <SelectorEstudiante
+        estudiantes={estudiantes}
+        estudianteSeleccionado={estudianteSeleccionado}
+        onChange={setEstudianteSeleccionado}
+      />
       <div className="opciones-juegos">
         <button
           className="btn item-tabla"
+          disabled={!estudianteSeleccionado}
           onClick={() => setJuegoActivo("tablas")}
         >
           Tablas de Multiplicar
         </button>
         <button
           className="btn item-sum"
+          disabled={!estudianteSeleccionado}
           onClick={() => setJuegoActivo("sumas")}
         >
           Suma de Quebrados
         </button>
         <button
           className="btn item-multi"
+          disabled={!estudianteSeleccionado}
           onClick={() => setJuegoActivo("multiplicacion")}
         >
-          Mutiplicación con Decimales
+          Multiplicación con Decimales
         </button>
       </div>
     </div>
   );
-};
+}
 
 export default Primaria;

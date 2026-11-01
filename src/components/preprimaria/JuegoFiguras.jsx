@@ -1,7 +1,8 @@
 import { useState } from "react";
 import "../../App.css";
+import { guardarProgreso } from "../SelectorEstudiante";
 
-function JuegoFiguras({ onReturn }) {
+function JuegoFiguras({ estudianteId, onReturn }) {
   //figuras y estados iniciales de juego
   const figuras = ["Circulo", "Cuadrado", "Triangulo", "Rectangulo"];
   const [figuraObjetivo, setFiguraObjetivo] = useState("Triangulo");
@@ -9,6 +10,13 @@ function JuegoFiguras({ onReturn }) {
   const [puntuacion, setPuntuacion] = useState(0);
   const [contador, setContador] = useState(1);
   const [juegoGanado, setJuegoGanado] = useState(false);
+
+  const actualizarPuntuacion = (nuevaPuntuacion) => {
+    setPuntuacion(nuevaPuntuacion);
+    guardarProgreso(estudianteId, 2, nuevaPuntuacion).catch((error) => {
+      console.error("Error al guardar el progreso:", error);
+    });
+  };
 
   const obtenerFiguraAleatoria = () => {
     //constantes para obtener un numero al azar
@@ -22,7 +30,7 @@ function JuegoFiguras({ onReturn }) {
   const evaluarRespuesta = (figuraSeleccionada) => {
     if (figuraSeleccionada === figuraObjetivo) {
       setMensaje("¡Excelente!");
-      setPuntuacion((prev) => prev + 10);
+      actualizarPuntuacion(puntuacion + 10);
       const siguienteContador = contador + 1;
 
       if (siguienteContador === 11) {
@@ -37,6 +45,7 @@ function JuegoFiguras({ onReturn }) {
       alert(
         "Haz perdido, intentalo de nuevo. Tu puntuación ha sido: " + puntuacion,
       );
+      actualizarPuntuacion(puntuacion);
       setMensaje("¡Intentalo de nuevo!");
       setContador(1);
     }

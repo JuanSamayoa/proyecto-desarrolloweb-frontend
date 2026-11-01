@@ -1,10 +1,13 @@
 // 1. Importar funciones y librerías, configurar ruta de APIs del Backend
 import { useState } from "react";
 import "../App.css";
+import { guardarEstudiante } from "../components/SelectorEstudiante";
 
 const API_URL =
   import.meta.env.VITE_API_URL ||
-  "https://dw-api-backend-2026-gmd6hmbzb6crf9cd.mexicocentral-01.azurewebsites.net/api";
+  (import.meta.env.DEV
+    ? "/api"
+    : "https://dw-api-backend-2026-gmd6hmbzb6crf9cd.mexicocentral-01.azurewebsites.net/api");
 
 function Inicio() {
   const [formDatos, setFormDatos] = useState({
@@ -26,7 +29,7 @@ function Inicio() {
 
     try {
       // Registrar estudiante
-      await fetch(`${API_URL}/estudiantes`, {
+      const respuesta = await fetch(`${API_URL}/estudiantes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -35,6 +38,13 @@ function Inicio() {
         }),
       });
 
+      const datos = await respuesta.json();
+      if (!respuesta.ok) {
+        throw new Error(datos.error || "No se pudo registrar el estudiante");
+      }
+
+      guardarEstudiante(datos);
+
       alert("¡Estudiante registrado correctamente!");
       setFormDatos({
         nombre: "",
@@ -42,6 +52,7 @@ function Inicio() {
       });
     } catch (error) {
       console.error("Error al guardar:", error);
+      alert("No se pudo registrar el estudiante. Inténtalo de nuevo.");
     }
   };
 
@@ -69,6 +80,8 @@ function Inicio() {
           type="number"
           name="edad"
           placeholder="Edad (Años)"
+          min="1"
+          max="99"
           value={formDatos.edad}
           onChange={manejoCambios}
           required

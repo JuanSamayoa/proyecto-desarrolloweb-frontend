@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "../../App.css";
 import gato from "../../assets/svg/cat.svg";
 import perro from "../../assets/svg/dog.svg";
-import leon from "../../assets/svg/lion.svg";
 import delfin from "../../assets/svg/dolphin.svg";
-import { useRef } from "react";
+import leon from "../../assets/svg/lion.svg";
+import { guardarProgreso } from "../SelectorEstudiante";
 
-function JuegoMemoria({ onReturn }) {
+function JuegoMemoria({ estudianteId, onReturn }) {
   const cartas = [
     {
       id: 1,
@@ -71,6 +71,13 @@ function JuegoMemoria({ onReturn }) {
   const [puntuacion, setPuntuacion] = useState(0);
   const timerReinicio = useRef(null);
 
+  const actualizarPuntuacion = (nuevaPuntuacion) => {
+    setPuntuacion(nuevaPuntuacion);
+    guardarProgreso(estudianteId, 3, nuevaPuntuacion).catch((error) => {
+      console.error("Error al guardar el progreso:", error);
+    });
+  };
+
   //Click en carta para comprobar pares
   const manejarClicCarta = (b) => {
     if (deshabilitado || b.encontrado || b.volteada) {
@@ -96,7 +103,7 @@ function JuegoMemoria({ onReturn }) {
           }
         });
         setBaraja(barajaActualizada);
-        setPuntuacion(puntuacion + 20);
+        actualizarPuntuacion(puntuacion + 20);
         setDeshabilitado(false);
         setSeleccionadas([]);
       } else {
@@ -112,7 +119,7 @@ function JuegoMemoria({ onReturn }) {
           setBaraja(barajaActualizada);
           setSeleccionadas([]);
           setDeshabilitado(false);
-          setPuntuacion((prev) => Math.max(0, prev - 5));
+          actualizarPuntuacion(Math.max(0, puntuacion - 5));
         }, 1000);
       }
     }

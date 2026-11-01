@@ -1,12 +1,20 @@
 import { useEffect, useState } from "react";
 import "../../App.css";
+import { guardarProgreso } from "../SelectorEstudiante";
 
-function JuegoTablasMultiplicar({ onReturn }) {
+function JuegoTablasMultiplicar({ estudianteId, onReturn }) {
   const [factores, setFactores] = useState({ a: 0, b: 0, respuesta: 0 });
   const [opciones, setOpciones] = useState([]);
   const [puntuacion, setPuntuacion] = useState(0);
   const [numeroPreguntas, setNumeroPreguntas] = useState(0);
   const [juegoGanado, setJuegoGanado] = useState(false);
+
+  const actualizarPuntuacion = (nuevaPuntuacion) => {
+    setPuntuacion(nuevaPuntuacion);
+    guardarProgreso(estudianteId, 4, nuevaPuntuacion).catch((error) => {
+      console.error("Error al guardar el progreso:", error);
+    });
+  };
 
   const randomizar = (arr) => {
     const arregloOrdenado = structuredClone(arr);
@@ -49,7 +57,7 @@ function JuegoTablasMultiplicar({ onReturn }) {
 
   const validarRespuesta = (seleccion) => {
     if (seleccion === factores.respuesta) {
-      setPuntuacion((prev) => prev + 10);
+      actualizarPuntuacion(puntuacion + 10);
       const siguientePregunta = numeroPreguntas + 1;
 
       if (siguientePregunta === 10) {
@@ -62,7 +70,7 @@ function JuegoTablasMultiplicar({ onReturn }) {
       setNumeroPreguntas(siguientePregunta);
     } else {
       alert("Respuesta incorrecta, ¡inténtalo de nuevo!");
-      setPuntuacion((prev) => Math.max(0, prev - 5));
+      actualizarPuntuacion(Math.max(0, puntuacion - 5));
     }
   };
 

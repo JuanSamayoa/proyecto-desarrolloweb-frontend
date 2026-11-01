@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../../App.css";
+import { guardarProgreso } from "../SelectorEstudiante";
 
-function JuegoEspacial({ onReturn }) {
+function JuegoEspacial({ estudianteId, onReturn }) {
   const preguntas = [
     {
       pregunta: "¿Está el objeto ARRIBA?",
@@ -69,11 +70,25 @@ function JuegoEspacial({ onReturn }) {
   const [mensaje, setMensaje] = useState("");
   const [numeroPreguntas, setNumeroPreguntas] = useState(0);
   const [juegoGanado, setJuegoGanado] = useState(false);
+  const [imagenCargada, setImagenCargada] = useState(false);
+  const [errorImagen, setErrorImagen] = useState(false);
+
+  const actualizarPuntuacion = (nuevaPuntuacion) => {
+    setPuntuacion(nuevaPuntuacion);
+    guardarProgreso(estudianteId, 1, nuevaPuntuacion).catch((error) => {
+      console.error("Error al guardar el progreso:", error);
+    });
+  };
+
+  useEffect(() => {
+    setImagenCargada(false);
+    setErrorImagen(false);
+  }, [indicePregunta]);
 
   const evaluarRespuesta = (respuesta) => {
     if (respuesta === preguntas[indicePregunta].respuesta) {
       setMensaje("¡Excelente!");
-      setPuntuacion((prev) => prev + 10);
+      actualizarPuntuacion(puntuacion + 10);
       const siguientePregunta = numeroPreguntas + 1;
 
       if (siguientePregunta === preguntas.length) {
@@ -87,7 +102,7 @@ function JuegoEspacial({ onReturn }) {
     } else {
       alert("Haz perdido, intentalo de nuevo. Tu puntuación es: " + puntuacion);
       setMensaje("¡Intentalo de nuevo!");
-      setPuntuacion(0);
+      actualizarPuntuacion(0);
     }
   };
 
@@ -132,16 +147,30 @@ function JuegoEspacial({ onReturn }) {
         Debes seleccionar "Si" si es verdadero o "No" si es falso.
       </p>
       <h2 className="subtitulo">{preguntas[indicePregunta].pregunta}</h2>
-      <img
-        className="img-espacial"
-        src={preguntas[indicePregunta].imagen}
-        alt="imagen"
-      />
+      <div className="imagen-espacial-contenedor" aria-live="polite">
+        {!imagenCargada && !errorImagen && <p>Cargando imagen...</p>}
+        {errorImagen && <p>No se pudo cargar la imagen.</p>}
+        <img
+          className="img-espacial"
+          src={preguntas[indicePregunta].imagen}
+          alt="imagen del ejercicio"
+          onLoad={() => setImagenCargada(true)}
+          onError={() => setErrorImagen(true)}
+        />
+      </div>
       <div className="btn-decisiones">
-        <button className="btn-si" onClick={() => evaluarRespuesta("Si")}>
+        <button
+          className="btn-si"
+          disabled={!imagenCargada}
+          onClick={() => evaluarRespuesta("Si")}
+        >
           Si
         </button>
-        <button className="btn-no" onClick={() => evaluarRespuesta("No")}>
+        <button
+          className="btn-no"
+          disabled={!imagenCargada}
+          onClick={() => evaluarRespuesta("No")}
+        >
           No
         </button>
       </div>

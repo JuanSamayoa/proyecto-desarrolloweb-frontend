@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import "../../App.css";
+import { guardarProgreso } from "../SelectorEstudiante";
 
-function JuegoSumaQuebrados({ onReturn }) {
+function JuegoSumaQuebrados({ estudianteId, onReturn }) {
   const [puntuacion, setPuntuacion] = useState(0);
   const [factores, setFactores] = useState({
     a: 0,
@@ -12,6 +13,13 @@ function JuegoSumaQuebrados({ onReturn }) {
   const [juegoGanado, setJuegoGanado] = useState(false);
   const [numeroPreguntas, setNumeroPreguntas] = useState(0);
   const [opciones, setOpciones] = useState([]);
+
+  const actualizarPuntuacion = (nuevaPuntuacion) => {
+    setPuntuacion(nuevaPuntuacion);
+    guardarProgreso(estudianteId, 5, nuevaPuntuacion).catch((error) => {
+      console.error("Error al guardar el progreso:", error);
+    });
+  };
 
   const randomizar = (arr) => {
     const arregloOrdenado = structuredClone(arr);
@@ -67,7 +75,7 @@ function JuegoSumaQuebrados({ onReturn }) {
 
   const validarRespuesta = (seleccion) => {
     if (seleccion === factores.respuesta) {
-      setPuntuacion((prev) => prev + 10);
+      actualizarPuntuacion(puntuacion + 10);
       const siguientePregunta = numeroPreguntas + 1;
 
       if (siguientePregunta === 10) {
@@ -80,7 +88,7 @@ function JuegoSumaQuebrados({ onReturn }) {
       setNumeroPreguntas(siguientePregunta);
     } else {
       alert("Respuesta incorrecta, ¡inténtalo de nuevo!");
-      setPuntuacion((prev) => Math.max(0, prev - 5));
+      actualizarPuntuacion(Math.max(0, puntuacion - 5));
     }
   };
 
@@ -112,7 +120,10 @@ function JuegoSumaQuebrados({ onReturn }) {
         </div>
       )}
       <h1 className="titulo">Este es el Juego de Suma de Quebrados</h1>
-      <p className="texto-instruccion">Debes realizar la suma de quebrados y tratar de ganar la mayor cantidad de puntos!</p>
+      <p className="texto-instruccion">
+        Debes realizar la suma de quebrados y tratar de ganar la mayor cantidad
+        de puntos!
+      </p>
       <p className="contador">Pregunta no: {numeroPreguntas + 1} / 10</p>
       <div className="factores">
         <span className="division">
