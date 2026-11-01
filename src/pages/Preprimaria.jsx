@@ -12,9 +12,15 @@ function Preprimaria() {
   const [juegoActivo, setJuegoActivo] = useState(null);
   const [estudiantes, setEstudiantes] = useState([]);
   const [estudianteSeleccionado, setEstudianteSeleccionado] = useState("");
+  const [cargandoEstudiantes, setCargandoEstudiantes] = useState(true);
 
   useEffect(() => {
-    obtenerEstudiantes().then(setEstudiantes);
+    const cargarEstudiantes = async () => {
+      setEstudiantes(await obtenerEstudiantes());
+      setCargandoEstudiantes(false);
+    };
+
+    cargarEstudiantes();
   }, []);
 
   if (juegoActivo === "figuras") {
@@ -48,6 +54,7 @@ function Preprimaria() {
         estudiantes={estudiantes}
         estudianteSeleccionado={estudianteSeleccionado}
         onChange={setEstudianteSeleccionado}
+        cargando={cargandoEstudiantes}
       />
       <div className="opciones-juegos">
         <button

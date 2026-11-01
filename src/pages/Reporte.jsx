@@ -21,9 +21,15 @@ function Reporte() {
   const [progresos, fijarProgresos] = useState([]);
   const [estudiantes, setEstudiantes] = useState([]);
   const [estudianteSeleccionado, setEstudianteSeleccionado] = useState("");
+  const [cargandoEstudiantes, setCargandoEstudiantes] = useState(true);
 
   useEffect(() => {
-    obtenerEstudiantes().then(setEstudiantes);
+    const cargarEstudiantes = async () => {
+      setEstudiantes(await obtenerEstudiantes());
+      setCargandoEstudiantes(false);
+    };
+
+    cargarEstudiantes();
   }, []);
 
   useEffect(() => {
@@ -55,8 +61,13 @@ function Reporte() {
           id="filtro-estudiante"
           value={estudianteSeleccionado}
           onChange={(e) => setEstudianteSeleccionado(e.target.value)}
+          disabled={cargandoEstudiantes}
         >
-          <option value="">Todos los estudiantes</option>
+          <option value="">
+            {cargandoEstudiantes
+              ? "Cargando estudiantes..."
+              : "Todos los estudiantes"}
+          </option>
           {estudiantes.map((estudiante) => (
             <option key={estudiante.id} value={estudiante.id}>
               {estudiante.nombre}

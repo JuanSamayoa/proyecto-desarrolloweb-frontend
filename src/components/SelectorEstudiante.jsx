@@ -1,21 +1,11 @@
 import { Link } from "react-router-dom";
 import "../App.css";
 
-const CLAVE_ESTUDIANTES = "estudiantesRegistrados";
 const API_URL =
   import.meta.env.VITE_API_URL ||
   (import.meta.env.DEV
     ? "/api"
     : "https://dw-api-backend-2026-gmd6hmbzb6crf9cd.mexicocentral-01.azurewebsites.net/api");
-
-const obtenerEstudiantesLocales = () => {
-  try {
-    return JSON.parse(localStorage.getItem(CLAVE_ESTUDIANTES)) || [];
-  } catch (error) {
-    console.error("Error al consultar estudiantes:", error);
-    return [];
-  }
-};
 
 export const obtenerEstudiantes = async () => {
   try {
@@ -24,26 +14,11 @@ export const obtenerEstudiantes = async () => {
       throw new Error("No se pudieron consultar los estudiantes");
     }
 
-    const estudiantes = await respuesta.json();
-    localStorage.setItem(CLAVE_ESTUDIANTES, JSON.stringify(estudiantes));
-    return estudiantes;
+    return await respuesta.json();
   } catch (error) {
     console.error("Error al consultar estudiantes:", error);
-    return obtenerEstudiantesLocales();
+    return [];
   }
-};
-
-export const guardarEstudiante = (estudiante) => {
-  const estudiantes = obtenerEstudiantesLocales();
-  const estudiantesActualizados = [
-    ...estudiantes.filter((item) => item.id !== estudiante.id),
-    estudiante,
-  ];
-
-  localStorage.setItem(
-    CLAVE_ESTUDIANTES,
-    JSON.stringify(estudiantesActualizados),
-  );
 };
 
 export const guardarProgreso = async (estudianteId, actividadId, puntaje) => {
@@ -66,11 +41,18 @@ export const guardarProgreso = async (estudianteId, actividadId, puntaje) => {
   }
 };
 
-function SelectorEstudiante({ estudiantes, estudianteSeleccionado, onChange }) {
+function SelectorEstudiante({
+  estudiantes,
+  estudianteSeleccionado,
+  onChange,
+  cargando,
+}) {
   return (
     <div className="selector-estudiante">
       <label htmlFor="estudiante">¿Quién va a jugar?</label>
-      {estudiantes.length > 0 ? (
+      {cargando ? (
+        <p>Cargando estudiantes...</p>
+      ) : estudiantes.length > 0 ? (
         <select
           id="estudiante"
           value={estudianteSeleccionado}

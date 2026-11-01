@@ -1,7 +1,6 @@
 // 1. Importar funciones y librerías, configurar ruta de APIs del Backend
 import { useState } from "react";
 import "../App.css";
-import { guardarEstudiante } from "../components/SelectorEstudiante";
 
 const API_URL =
   import.meta.env.VITE_API_URL ||
@@ -42,8 +41,6 @@ function Inicio() {
       if (!respuesta.ok) {
         throw new Error(datos.error || "No se pudo registrar el estudiante");
       }
-
-      guardarEstudiante(datos);
 
       alert("¡Estudiante registrado correctamente!");
       setFormDatos({
